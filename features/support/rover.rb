@@ -1,9 +1,9 @@
+require_relative 'coordinate.rb'
 require_relative 'compass'
 
 class Rover
   def initialize(x, y, direction)
-    @current_x = x.to_i
-    @current_y = y.to_i
+    @coordinate = Coordinate.new(x, y)
     @compass = Compass.new
     @compass.caliberate(direction)
   end
@@ -11,7 +11,7 @@ class Rover
   def follow_instruction(instruction)
     case instruction
     when "M"
-      rover_move
+      move
     when "L"
       turn_left
     when "R"
@@ -27,22 +27,22 @@ class Rover
     @compass.rotate_clockwise
   end
 
-  def rover_move
+  def move
     case @compass.current_direction
     when "N"
-      @current_y = @current_y + 1
+      @coordinate.increment_y
     when "S"
-      @current_y = @current_y - 1
+      @coordinate.decrement_y
     when "E"
-      @current_x = @current_x + 1
+      @coordinate.increment_x
     when "W"
-      @current_x = @current_x - 1
+      @coordinate.decrement_x
     else
       raise('Unsupported value for direction')
     end
   end
 
   def current_position
-    [@current_x, @current_y, @compass.current_direction].join(' ')
+    [@coordinate.x, @coordinate.y, @compass.current_direction].join(' ')
   end
 end
