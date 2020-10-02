@@ -1,3 +1,5 @@
+require_relative 'parallel_cucumber/redis_server'
+
 desc "Run all tests"
 task :test do
   system('bundle exec cucumber')
@@ -5,5 +7,11 @@ end
 
 
 task :test_parallel do
-  system('bundle exec parallel_cucumber -n 4 -r ./batch_hook.rb')
+  redis_server = RedisServer.new
+  address = redis_server.start
+  ENV['REDIS'] = address.split(',').first
+  system("bundle exec parallel_cucumber -n 4 \
+          -r ./parallel_cucumber/batch_hook.rb \
+          --queue-connection-param #{address}")
+  redis_server.stop
 end
