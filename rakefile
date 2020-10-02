@@ -1,0 +1,9 @@
+desc "Run all tests"
+task :test do
+  system('bundle exec cucumber')
+end
+
+
+task :test_parallel do
+  system('bundle exec parallel_cucumber -n 4 -r ./batch_hook.rb')
+end
